@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        tools:layout_editor_absoluteX="41dp"
-        tools:layout_editor_absoluteY="103dp" />
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="247dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="42dp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="135dp"
+        android:layout_height="88dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/id"
+        tools:layout_editor_absoluteX="48dp" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="245dp"
+        android:layout_height="230dp"
+        android:layout_marginTop="88dp"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:layout_editor_absoluteX="32dp" />
 </android.support.constraint.ConstraintLayout>
