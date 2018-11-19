@@ -1,20 +1,16 @@
 package com.example.kicheol.myapplication;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,7 +24,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 
-public class Board extends Fragment {
+public class Board extends Fragment implements MainActivity.onKeyBackPressedListener{
 
     ListView listView;
     MyBoardListAdapter myListAdapter;
@@ -42,14 +38,14 @@ public class Board extends Fragment {
         listView = (ListView)rootView.findViewById(R.id.board_listView);
         list_Board = new ArrayList<Board_Item>();
 
-        String table_num = "2"; //= getArguments().getString("table_num");    //테이블번호 받기
+        String table_num = getArguments().getString("table_num");    //테이블번호 받기
 
         Board_setting bs = new Board_setting();             //db에서 데이터 받아서 리스트에 넣기
         bs.execute(table_num);
 
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-
+        ft.addToBackStack(null);
 
 
         return rootView;
@@ -57,7 +53,7 @@ public class Board extends Fragment {
 
     class Board_setting extends AsyncTask<String, Void, String> {
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String s) {                //배열에 db값 넣기
             super.onPostExecute(s);
 
 
@@ -68,16 +64,14 @@ public class Board extends Fragment {
                 String id;
                 String date;
                 String content;
-                for(int i = 0; i < jSon.length(); i++){
+                for(int i = 0; i < jArray.length(); i++){
                     JSONObject jo = jArray.getJSONObject(i);
                     id = jo.getString("id");
                     date = jo.getString("date");
                     content = jo.getString("content");
                     list_Board.add(new Board_Item(id,date,content));
 
-                    Log.e("asdf", jo.getString("id"));
                 }
-                Log.e("asdf", "dd" + jSon.length());
             } catch(Exception e){
                 ;
             }
@@ -100,7 +94,7 @@ public class Board extends Fragment {
                 con.setDoInput(true); // Allow Inputs
                 con.setDoOutput(true); // Allow Outputs
                 con.setUseCaches(false); // Don't use a Cached Copy
-                con.setRequestMethod("POST");
+                //con.setRequestMethod("POST");                          //개쓰레기
 
                 OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
 
@@ -113,15 +107,26 @@ public class Board extends Fragment {
 
                 while ((line= reader.readLine()) != null){
                     sb.append(line + "\n");
-                    Log.e("asdf",sb.toString());
                 }
 
                 con.disconnect();
 
-                return sb.toString();         //리턴값 정하기
+                return sb.toString().trim();         //리턴값 정하기
 
             } catch(Exception e) {};
             return null;
         }
     }
+/////////////////뒤로키 눌러도 안꺼지게하는거
+    public void onBack() {
+
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) context).pushOnBackKeyPressedListener(this);
+    }
+////////////////////////////////////////////////
 }

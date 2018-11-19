@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
@@ -51,6 +53,31 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
     }
+//////////back 키눌러도 엑티비티 안꺼지도록하는거
+    public interface onKeyBackPressedListener {
+        void onBack();
+    }
+
+    public void pushOnBackKeyPressedListener(onKeyBackPressedListener listener) {
+        mFragmentBackStack.push(listener);
+    }
+
+    public Stack<onKeyBackPressedListener> mFragmentBackStack = new Stack<>();
+
+    @Override
+    public void onBackPressed() {
+            if (!mFragmentBackStack.isEmpty()) {
+                mFragmentBackStack.pop().onBack();
+            } else {
+                super.onBackPressed();
+            }
+    }
+    /////////////////////////////////////////////
+
+//    private onKeyBackPressedListener mOnKeyBackPressedListener;
+//    public void setmOnKeyBackPressedListener(onKeyBackPressedListener listener){
+//        mOnKeyBackPressedListener = listener;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

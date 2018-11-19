@@ -51,7 +51,6 @@ public class MyBoardListAdapter extends BaseAdapter {
             //viewholder.profile_imageView = (ImageView)convertView.findViewById(R.id.profile_imageView);
             convertView.setTag(viewholder);
 
-Log.e("asdf",list_BoardArray.get(position).getId());
         viewholder.id_textView.setText(list_BoardArray.get(position).getId());
         viewholder.content_textView.setText(list_BoardArray.get(position).getContent());
         viewholder.date_textView.setText(list_BoardArray.get(position).getDate());

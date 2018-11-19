@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="354dp"
-        android:layout_height="11dp"
+        android:layout_height="3dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -27,9 +27,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="22dp"
-        android:layout_marginLeft="22dp"
-        android:layout_marginTop="41dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="17dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -39,18 +39,19 @@
         android:layout_alignBottom="@+id/imageView"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="86dp"
-        android:layout_marginRight="86dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginEnd="108dp"
+        android:layout_marginRight="108dp"
+        android:layout_marginBottom="0dp"
         android:text="아이디" />
 
     <TextView
         android:id="@+id/board_item_content"
         android:layout_width="351dp"
-        android:layout_height="57dp"
+        android:layout_height="wrap_content"
         android:layout_alignStart="@+id/imageView2"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="104dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="74dp"
         android:text="내용" />
 
     <TextView
@@ -59,8 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/imageView2"
         android:layout_alignBottom="@+id/imageView"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="-1dp"
         android:text="시간" />
 
 

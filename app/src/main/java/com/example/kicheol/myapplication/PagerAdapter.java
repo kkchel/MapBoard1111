@@ -19,7 +19,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                frag1 tab1 = new frag1();
+                First_Tap tab1 = new First_Tap();
                 return tab1;
             case 1:
                 frag2 tab2 = new frag2();

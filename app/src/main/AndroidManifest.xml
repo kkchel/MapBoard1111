@@ -10,6 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBRXeIps4wBYeZtKhlPNzm0IX3wkWWExVY" />   //구글맵
+
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +32,5 @@
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
-
 
 </manifest>

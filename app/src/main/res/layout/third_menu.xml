@@ -13,12 +13,4 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="228dp"
-        android:layout_height="387dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="35dp"
-        tools:layout_editor_absoluteY="0dp" />
-
 </android.support.constraint.ConstraintLayout>
