@@ -33,6 +33,7 @@
         android:layout_marginRight="48dp"
         android:ems="10"
         android:inputType="textPassword"
+        android:text="aaa"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_id" />

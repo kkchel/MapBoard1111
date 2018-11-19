@@ -47,8 +47,6 @@ public class frag3 extends Fragment {
 
         myListAdapter = new MyListAdapter(getActivity(), list_itemArrayList);
         listView.setAdapter(myListAdapter);
-        TextView a = (TextView)rootView.findViewById(R.id.tv);
-        a.setText(":asdfasdf");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {                         // 클릭시 이벤트
             @Override

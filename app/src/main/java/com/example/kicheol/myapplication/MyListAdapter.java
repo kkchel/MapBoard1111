@@ -43,7 +43,6 @@ public class MyListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {              //반복으로 돌려주는곳?
-        Log.d("dd","dd");
         if(convertView == null) {
 
             convertView = LayoutInflater.from(context).inflate(R.layout.item,null);   // xml 불러오기

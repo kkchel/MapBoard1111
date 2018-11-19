@@ -1,10 +1,12 @@
 package com.example.kicheol.myapplication;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +18,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String id = "";
+        String pw = "";
+
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            id = intent.getStringExtra("id");
+            pw = intent.getStringExtra("pw");
+        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.getTabAt(0).setIcon(R.drawable.tap_img1);
