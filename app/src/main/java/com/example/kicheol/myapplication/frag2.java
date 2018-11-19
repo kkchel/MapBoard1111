@@ -50,7 +50,7 @@ public class frag2 extends Fragment {
 
         //list = (ListView) rootView.findViewById(R.id.listView);
         personList = new ArrayList<HashMap<String, String>>();
-        getData("http://192.168.0.23/PHP_connection.php"); //수정 필요
+        //getData("http://192.168.0.23/PHP_connection.php"); //수정 필요
 //        @Override
 //        protected void onCreate (Bundle savedInstanceState){
 //            super.onCreate(savedInstanceState);
