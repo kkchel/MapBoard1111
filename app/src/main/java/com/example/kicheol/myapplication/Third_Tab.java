@@ -1,18 +1,13 @@
 package com.example.kicheol.myapplication;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -26,61 +21,29 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-
-public class Board extends Fragment implements MainActivity.onKeyBackPressedListener{
-
+public class Third_Tab extends Fragment {
     ListView listView;
     MyBoardListAdapter myListAdapter;
     ArrayList<Board_Item> list_Board;
-    EditText edit;
-    String table_num;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.board, container, false);
-
-        listView = (ListView)rootView.findViewById(R.id.board_listView);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.third_tab, container, false);
         list_Board = new ArrayList<Board_Item>();
-        table_num = getArguments().getString("table_num");    //테이블번호 받기
+        listView = rootView.findViewById(R.id.third_tab_listView);
+
+        Board_setting bs = new Board_setting();
+        bs.execute(getArguments().getString("id"));
 
 
-        Board_setting bs = new Board_setting();             //db에서 데이터 받아서 리스트에 넣기
-        bs.execute(table_num);
-
-        Button btn_Write = (Button) rootView.findViewById(R.id.btn_write);
-
-        btn_Write.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment write = new Write();
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-
-
-                Bundle bundle = new Bundle();  //인자 넘겨주기
-                bundle.putString("table_num", table_num);
-                String id = getArguments().getString("id");
-
-                bundle.putString("id", id);
-                write.setArguments(bundle);
-
-
-
-                transaction.addToBackStack(null);
-                transaction.add(R.id.write_layout , write).commit();
-
-
-            }
-        });
-
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
 
 
         return rootView;
     }
-/////////////////통신
+
+    /////////////////통신
     class Board_setting extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String s) {                //배열에 db값 넣기
@@ -119,7 +82,7 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
                 String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
 
 
-                URL url = new URL("http://kimki.iptime.org/table_set.php");
+                URL url = new URL("http://kimki.iptime.org/load_my.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                 con.setDoInput(true); // Allow Inputs
@@ -148,16 +111,4 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
             return null;
         }
     }
-/////////////////뒤로키 눌러도 안꺼지게하는거
-    public void onBack() {
-
-        getFragmentManager().popBackStack();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        ((MainActivity) context).pushOnBackKeyPressedListener(this);
-    }
-////////////////////////////////////////////////
 }

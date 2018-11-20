@@ -6,24 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    이거써야 처음에 한번 안그림
+    <!--이거써야 처음에 한번 안그림-->
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.google.android.gms.maps.MapFragment"
         />
-
-    <!--<Button-->
-        <!--android:id="@+id/button"-->
-        <!--android:layout_width="82dp"-->
-        <!--android:layout_height="49dp"-->
-        <!--android:layout_marginStart="40dp"-->
-        <!--android:layout_marginLeft="40dp"-->
-        <!--android:layout_marginBottom="80dp"-->
-        <!--android:text="Button"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
 
     <LinearLayout
         android:id="@+id/board_layout"

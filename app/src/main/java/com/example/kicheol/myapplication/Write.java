@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,90 +22,59 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+public class Write extends Fragment implements MainActivity.onKeyBackPressedListener{
+    EditText write_content;
 
-public class Board extends Fragment implements MainActivity.onKeyBackPressedListener{
-
-    ListView listView;
-    MyBoardListAdapter myListAdapter;
-    ArrayList<Board_Item> list_Board;
-    EditText edit;
-    String table_num;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.board, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.write, container, false);
 
-        listView = (ListView)rootView.findViewById(R.id.board_listView);
-        list_Board = new ArrayList<Board_Item>();
-        table_num = getArguments().getString("table_num");    //테이블번호 받기
-
-
-        Board_setting bs = new Board_setting();             //db에서 데이터 받아서 리스트에 넣기
-        bs.execute(table_num);
-
-        Button btn_Write = (Button) rootView.findViewById(R.id.btn_write);
+        Button btn_Write = (Button) rootView.findViewById(R.id.btn_write_input);
+        Button btn_Back = (Button) rootView.findViewById(R.id.btn_write_back);
+        write_content = rootView.findViewById(R.id.edit_write_content);
 
         btn_Write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment write = new Write();
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                String id =  getArguments().getString("id");
+                String table_num = getArguments().getString("table_num");
 
+                long now = System.currentTimeMillis();
+                Date date = new Date(now);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                String getTime = sdf.format(date);
 
-                Bundle bundle = new Bundle();  //인자 넘겨주기
-                bundle.putString("table_num", table_num);
-                String id = getArguments().getString("id");
+                Write_Input wi = new Write_Input();
+                wi.execute(table_num, id, getTime, write_content.getText().toString());
+            }
+        });
 
-                bundle.putString("id", id);
-                write.setArguments(bundle);
-
-
-
-                transaction.addToBackStack(null);
-                transaction.add(R.id.write_layout , write).commit();
-
-
+        btn_Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDestroy();
             }
         });
 
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-
-
         return rootView;
     }
-/////////////////통신
-    class Board_setting extends AsyncTask<String, Void, String> {
+
+
+
+
+////////////////통신
+    class Write_Input extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String s) {                //배열에 db값 넣기
             super.onPostExecute(s);
 
-
-            try {
-                JSONObject jSon = new JSONObject(s);
-                JSONArray jArray = jSon.getJSONArray("result");
-
-                String id;
-                String date;
-                String content;
-                for(int i = 0; i < jArray.length(); i++){
-                    JSONObject jo = jArray.getJSONObject(i);
-                    id = jo.getString("id");
-                    date = jo.getString("date");
-                    content = jo.getString("content");
-                    list_Board.add(new Board_Item(id,date,content));
-
-                }
-            } catch(Exception e){
-                ;
-            }
-
-            myListAdapter = new MyBoardListAdapter( getActivity(), list_Board);
-            listView.setAdapter(myListAdapter);
+            onDetach();
 
         }
 
@@ -115,11 +82,24 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
         protected String doInBackground(String... params) {
             try {
                 String tmp1 = params[0];
+                String tmp2 = params[1];
+                String tmp3 = params[2];
+                String tmp4 = params[3];
+
+
+
+
 
                 String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
+                data += "&" + URLEncoder.encode("tmp2", "UTF-8") + "=" + URLEncoder.encode(tmp2, "UTF-8");
+                data += "&" + URLEncoder.encode("tmp3", "UTF-8") + "=" + URLEncoder.encode(tmp3, "UTF-8");
+                data += "&" + URLEncoder.encode("tmp4", "UTF-8") + "=" + URLEncoder.encode(tmp4, "UTF-8");
+
+                Log.e("aa",data);
 
 
-                URL url = new URL("http://kimki.iptime.org/table_set.php");
+
+                URL url = new URL("http://kimki.iptime.org/write_input.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                 con.setDoInput(true); // Allow Inputs
@@ -138,7 +118,9 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
 
                 while ((line= reader.readLine()) != null){
                     sb.append(line + "\n");
+                    Log.e("aaa","dd" + sb.toString() + " dd");
                 }
+
 
                 con.disconnect();
 
@@ -148,7 +130,9 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
             return null;
         }
     }
-/////////////////뒤로키 눌러도 안꺼지게하는거
+
+
+    /////////////////뒤로키 눌러도 안꺼지게하는거
     public void onBack() {
 
         getFragmentManager().popBackStack();

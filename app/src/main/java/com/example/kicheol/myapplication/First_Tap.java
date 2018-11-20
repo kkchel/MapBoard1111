@@ -39,18 +39,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     MapFragment mMapFragment;
     View rootView;
     GoogleMap mMap;
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
 
-
-    }
+    ArrayList<Marker_Point> marker_array;
 
 
     @Nullable
@@ -59,35 +56,22 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
 
         rootView = inflater.inflate(R.layout.firtst_tap, container, false);
 
+        marker_array = new ArrayList<Marker_Point>();
+        Marker_Check mc = new Marker_Check();
+        mc.execute("","","");
+
         MapView mapView = (MapView) rootView.findViewById(R.id.map);
-        //mapView.setClickable(false);
 
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
-//        Button btn = (Button) rootView.findViewById(R.id.button);
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Fragment board = new Board();
-//                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//
-//
-//                Bundle bundle = new Bundle();  //인자 넘겨주기
-//                bundle.putString("table_num", "1");
-//                board.setArguments(bundle);
-//
-//
-//                transaction.add(R.id.board_layout, board).commit();
-//            }
-//
-//        });
+
         return rootView;
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {                     //지도 꾸미기
-        // Add a marker and move the camera
         mMap = googleMap;
+
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {      //오래클릭하면 마커만들기
             @Override
@@ -125,11 +109,20 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
                 MarkerOptions markerOptions = new MarkerOptions();            //마커생성
                 markerOptions.position(latLng);                                //마커위치
                 markerOptions.icon(BitmapDescriptorFactory.fromResource( R.drawable.panel));
-                markerOptions.snippet("수도");                                 //설명
                 mMap.addMarker(markerOptions);
 
             }
         });
+
+        for(int i = 0; i < marker_array.size(); i++){
+            MarkerOptions markerOptions = new MarkerOptions();            //마커생성
+            markerOptions.icon(BitmapDescriptorFactory.fromResource( R.drawable.panel));
+            markerOptions.position(new LatLng(marker_array.get(i).getLo(), marker_array.get(i).getLa()));
+
+            mMap.addMarker(markerOptions);
+        }
+
+
         LatLng SEOUL = new LatLng(37.56, 126.97);
 
         MarkerOptions markerOptions = new MarkerOptions();            //마커생성
@@ -137,7 +130,7 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
         markerOptions.title("서울");                                   //제목
         markerOptions.icon(BitmapDescriptorFactory.fromResource( R.drawable.panel));
         markerOptions.snippet("수도");                                 //설명
-        googleMap.addMarker(markerOptions);
+        mMap.addMarker(markerOptions);
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));       //카메라위치 옮기기
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
@@ -145,28 +138,10 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
 
 
 
-
-    //Button btn = (Button) rootView.findViewById(R.id.button);
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Fragment board = new Board();
-//                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//
-//
-//                Bundle bundle = new Bundle();  //인자 넘겨주기
-//                bundle.putString("table_num", "1");
-//                board.setArguments(bundle);
-//
-//
-//                transaction.add(R.id.board_layout, board).commit();
-//            }
-//
-//        });
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//        protected void onResume() {
+//        public void onResume() {
 //            super.onResume();
 //
 //            mMapFragment.getMapAsync(this);
@@ -197,36 +172,45 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
 
     ////////////통신/////////////////
     class Create_Board extends AsyncTask<String, Void, String> {
+        String num;
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             String id = "";
+
             try {
                 JSONObject jSon = new JSONObject(s);
                 JSONArray jArray = jSon.getJSONArray("result");
+
                 JSONObject jo = jArray.getJSONObject(0);
                 id = jo.getString("id");
 
+
             }catch(Exception e){}
+
             Fragment board = new Board();
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
 
+            String ab = getArguments().getString("id");
             Bundle bundle = new Bundle();  //인자 넘겨주기
             bundle.putString("table_num", id);
+            bundle.putString("id", ab);
             board.setArguments(bundle);
 
             transaction.addToBackStack(null);
             transaction.add(R.id.board_layout, board).commit();
 
-        }
 
+        }
         @Override
         protected String doInBackground(String... params) {
             try {
                 String tmp1 = params[0];
                 String tmp2 = params[1];
                 String tmp3 = params[2];                 //url 뭐쓸지 정하기
+
+                num = params[2];
 
 
                 String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
@@ -266,4 +250,77 @@ public class First_Tap extends Fragment implements OnMapReadyCallback, GoogleMap
             return null;
         }
     }
+    ///////////////////////////////통신 마커좌표
+    class Marker_Check extends AsyncTask<String, Void, String> {
+        String num;
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject jSon = new JSONObject(s);
+                JSONArray jArray = jSon.getJSONArray("result");
+
+                num = "" + jArray.length();
+                Double la;
+                Double lo;
+
+                for(int i = 0; i < jArray.length(); i++){
+                    JSONObject jo = jArray.getJSONObject(i);
+                    la = Double.parseDouble(jo.getString("latitude"));
+                    lo = Double.parseDouble(jo.getString("longitude"));
+                    marker_array.add(new Marker_Point(la,lo));
+                }
+                MarkerOptions markerOptions = new MarkerOptions();            //마커생성
+                //markerOptions.position(SEOUL);                                //마커위치
+                markerOptions.title("서울");                                   //제목
+                markerOptions.icon(BitmapDescriptorFactory.fromResource( R.drawable.panel));
+                markerOptions.snippet("수도");                                 //설명
+                mMap.addMarker(markerOptions);
+
+            }catch(Exception e){}
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                String tmp1 = params[0];
+                String tmp2 = params[1];
+                String tmp3 = params[2];
+
+                num = params[2];
+
+
+                String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
+                URL url = new URL("http://kimki.iptime.org/getmarker.php");
+
+
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                con.setDoInput(true); // Allow Inputs
+                con.setDoOutput(true); // Allow Outputs
+                con.setUseCaches(false); // Don't use a Cached Copy
+                //con.setRequestMethod("POST");                          //개쓰레기
+
+                OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+
+                wr.write(data);           //데이터
+                wr.flush();              //전송
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8")); //데이터 받기
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line= reader.readLine()) != null){
+                    sb.append(line + "\n");
+                }
+                con.disconnect();
+
+                return sb.toString().trim();         //리턴값 정하기
+
+            } catch(Exception e) {};
+            return null;
+        }
+    }
+
 }
