@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class Third_Tab extends Fragment {
     ListView listView;
     MyBoardListAdapter myListAdapter;
     ArrayList<Board_Item> list_Board;
+    String user_id;
 
     @Nullable
     @Override
@@ -35,7 +37,8 @@ public class Third_Tab extends Fragment {
         listView = rootView.findViewById(R.id.third_tab_listView);
 
         Board_setting bs = new Board_setting();
-        bs.execute(getArguments().getString("id"));
+        user_id = getArguments().getString("id");
+        bs.execute(user_id);
 
 
 

@@ -1,6 +1,5 @@
 package com.example.kicheol.myapplication;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -27,88 +24,78 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-
-public class Board extends Fragment implements MainActivity.onKeyBackPressedListener{
-
+public class Second_Tab extends Fragment {
     ListView listView;
-    MyBoardListAdapter myListAdapter;
-    ArrayList<Board_Item> list_Board;
-    String table_num;
+    MySecondListAdapter myListAdapter;
+    ArrayList<Friend_list_Item> list_Board;
     String user_id;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.board, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.second_tab, container, false);
 
-        listView = (ListView)rootView.findViewById(R.id.board_listView);
-        list_Board = new ArrayList<Board_Item>();
-        table_num = getArguments().getString("table_num");    //테이블번호 받기
+        listView = rootView.findViewById(R.id.second_tab_list);
+        list_Board  = new ArrayList<Friend_list_Item>();
+        Friend_Setting bs = new Friend_Setting();
+        user_id = getArguments().getString("id");
+        bs.execute(user_id,"0");
 
-
-        Board_setting bs = new Board_setting();             //db에서 데이터 받아서 리스트에 넣기
-        bs.execute(table_num);
-
-        Button btn_Write = (Button) rootView.findViewById(R.id.btn_write);
-
-        btn_Write.setOnClickListener(new View.OnClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onClick(View v) {
-                Fragment write = new Write();
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String friend_id = list_Board.get(position).getId();
+
+                Fragment board = new Board_Friend();
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
 
+                String ab = getArguments().getString("id");
                 Bundle bundle = new Bundle();  //인자 넘겨주기
-                bundle.putString("table_num", table_num);
-                user_id = getArguments().getString("id");
-
-                bundle.putString("id", user_id);
-                write.setArguments(bundle);
-
-
+                bundle.putString("friend_id", friend_id);
+                bundle.putString("id", ab);
+                board.setArguments(bundle);
 
                 transaction.addToBackStack(null);
-                transaction.add(R.id.write_layout , write).commit();
+                transaction.add(R.id.board_layout2, board).commit();
 
-
+                return false;
             }
         });
 
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-
 
         return rootView;
     }
-/////////////////통신
-    class Board_setting extends AsyncTask<String, Void, String> {
+
+    /////////////////통신
+    class Friend_Setting extends AsyncTask<String, Void, String> {
+
+        String param;
         @Override
         protected void onPostExecute(String s) {                //배열에 db값 넣기
             super.onPostExecute(s);
 
+                try {
+                    JSONObject jSon = new JSONObject(s);
+                    JSONArray jArray = jSon.getJSONArray("result");
 
-            try {
-                JSONObject jSon = new JSONObject(s);
-                JSONArray jArray = jSon.getJSONArray("result");
+                    String id;
 
-                String id;
-                String date;
-                String content;
-                for(int i = 0; i < jArray.length(); i++){
-                    JSONObject jo = jArray.getJSONObject(i);
-                    id = jo.getString("id");
-                    date = jo.getString("date");
-                    content = jo.getString("content");
-                    list_Board.add(new Board_Item(id,date,content));
+                    for (int i = 0; i < jArray.length(); i++) {
+                        JSONObject jo = jArray.getJSONObject(i);
+                        id = jo.getString("id");
+                        list_Board.add(new Friend_list_Item(id));
+                    }
 
+                } catch (Exception e) {
+                    ;
                 }
-            } catch(Exception e){
-                ;
-            }
 
-            myListAdapter = new MyBoardListAdapter( getActivity(), list_Board);
-            listView.setAdapter(myListAdapter);
+                myListAdapter = new MySecondListAdapter(getActivity(), list_Board);
+                listView.setAdapter(myListAdapter);
+
 
         }
 
@@ -116,12 +103,15 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
         protected String doInBackground(String... params) {
             try {
                 String tmp1 = params[0];
-
+                String tmp2 = params[1];
+                param = tmp2;
                 String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
+                URL url;
+                    url = new URL("http://kimki.iptime.org/friend_list.php");
 
 
-                URL url = new URL("http://kimki.iptime.org/table_set.php");
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                 con.setDoInput(true); // Allow Inputs
                 con.setDoOutput(true); // Allow Outputs
@@ -149,16 +139,4 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
             return null;
         }
     }
-/////////////////뒤로키 눌러도 안꺼지게하는거
-    public void onBack() {
-
-        getFragmentManager().popBackStack();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        ((MainActivity) context).pushOnBackKeyPressedListener(this);
-    }
-////////////////////////////////////////////////
 }

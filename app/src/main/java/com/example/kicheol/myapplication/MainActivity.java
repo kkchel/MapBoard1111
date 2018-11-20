@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Stack;
@@ -16,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
     String id = "";
-    String pw = "";
+
+    TextView tx_id;
 
 
     @Override
@@ -24,12 +26,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tx_id = findViewById(R.id.secret_id);
+
 
 
         Intent intent = getIntent();
 
         if (intent != null) {
             id = intent.getStringExtra("id");
+            tx_id.setText(id);
+
+
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

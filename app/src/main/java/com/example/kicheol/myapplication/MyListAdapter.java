@@ -19,11 +19,23 @@ public class MyListAdapter extends BaseAdapter {
     ArrayList<list_item> list_itemArrayList;
     ViewHolder viewholder;
 
+    int resourceId ;
+    private ListBtnClickListener listBtnClickListener ;
+
+
+    public interface ListBtnClickListener {
+        void OnlistBtnClick(int position);
+    }
 
     public MyListAdapter(Context context, ArrayList<list_item> list_itemArrayList) {
         this.context = context;
         this.list_itemArrayList = list_itemArrayList;
         notifyDataSetChanged();
+
+        //this.resourceId = resource ;
+        //this.listBtnClickListener = clickListener ;
+
+
     }
 
     @Override
@@ -52,6 +64,7 @@ public class MyListAdapter extends BaseAdapter {
             viewholder.date_textView = (TextView)convertView.findViewById(R.id.date_textview);
             viewholder.title_textView  =(TextView)convertView.findViewById(R.id.title_textview);
             viewholder.profile_imageView = (ImageView)convertView.findViewById(R.id.profile_imageView);
+
             convertView.setTag(viewholder);
         }else{
             viewholder = (ViewHolder)convertView.getTag();

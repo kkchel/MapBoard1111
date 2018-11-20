@@ -6,14 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -27,56 +22,28 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-
-public class Board extends Fragment implements MainActivity.onKeyBackPressedListener{
+public class Board_Friend extends Fragment implements MainActivity.onKeyBackPressedListener{
 
     ListView listView;
     MyBoardListAdapter myListAdapter;
     ArrayList<Board_Item> list_Board;
     String table_num;
     String user_id;
+    String friend_id;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.board, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.board_friend, container, false);
 
-        listView = (ListView)rootView.findViewById(R.id.board_listView);
+        listView = (ListView)rootView.findViewById(R.id.board_listView2);
         list_Board = new ArrayList<Board_Item>();
-        table_num = getArguments().getString("table_num");    //테이블번호 받기
+        friend_id = getArguments().getString("friend_id");    //테이블번호 받기
+
 
 
         Board_setting bs = new Board_setting();             //db에서 데이터 받아서 리스트에 넣기
-        bs.execute(table_num);
-
-        Button btn_Write = (Button) rootView.findViewById(R.id.btn_write);
-
-        btn_Write.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment write = new Write();
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-
-
-                Bundle bundle = new Bundle();  //인자 넘겨주기
-                bundle.putString("table_num", table_num);
-                user_id = getArguments().getString("id");
-
-                bundle.putString("id", user_id);
-                write.setArguments(bundle);
-
-
-
-                transaction.addToBackStack(null);
-                transaction.add(R.id.write_layout , write).commit();
-
-
-            }
-        });
-
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
+        bs.execute(friend_id);
 
 
         return rootView;
@@ -120,7 +87,7 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
                 String data = URLEncoder.encode("tmp1","UTF-8")+"="+URLEncoder.encode(tmp1,"UTF-8"); // "tmp1"=tmp1;
 
 
-                URL url = new URL("http://kimki.iptime.org/table_set.php");
+                URL url = new URL("http://kimki.iptime.org/friend_content.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                 con.setDoInput(true); // Allow Inputs
@@ -162,3 +129,4 @@ public class Board extends Fragment implements MainActivity.onKeyBackPressedList
     }
 ////////////////////////////////////////////////
 }
+
